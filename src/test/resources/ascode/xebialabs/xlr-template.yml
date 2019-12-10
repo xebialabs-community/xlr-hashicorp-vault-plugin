@@ -1,0 +1,153 @@
+#
+# Copyright 2019 XEBIALABS
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+---
+apiVersion: xl-release/v1
+kind: Templates
+spec:
+- directory: Vault
+  children:
+  - template: vault-test
+    scheduledStartDate: 2019-10-07T13:00:00Z
+    phases:
+    - phase: KV Engine-v1
+      description: |
+        The use case here is to showcase a simple write and read of a secret.
+        This phase shows creating and reading a secret from a KV - Version 1 engine.
+      tasks:
+      - name: Create Secret
+        type: vault.SecretsV1-CreateSecret
+        description: Start by creating a secret with a value we supplied.
+        vaultServer: myVault
+        mount_point: kv
+        path: mysecret/releases
+        key: ${release.title}-secret1a
+        value: !value "vault_CreateSecret_Create_Secret_value"
+      - name: Read Secret
+        type: vault.SecretsV1-ReadSecret
+        description: Read a secret from vault.  Need to show evidence how we're using the secret.
+        vaultServer: myVault
+        mount_point: kv
+        path: mysecret/releases
+        key: ${release.title}-secret1a
+        variableMapping:
+          pythonScript.value: ${kv.read-secret1a}
+      - name: Pause
+        type: xlrelease.Task
+        description: Show evidence of this secret being used.
+        owner: admin
+      - name: Create Secret
+        type: vault.SecretsV1-CreateSecret
+        description: Create a second secret.
+        vaultServer: myVault
+        mount_point: kv
+        path: mysecret/releases
+        key: ${release.title}-secret1b
+        value: !value "vault_CreateSecret_Create_Secret_value"
+      - name: Read Secret
+        type: vault.SecretsV1-ReadSecret
+        description: Read teh second secret
+        vaultServer: myVault
+        mount_point: kv
+        path: mysecret/releases
+        key: ${release.title}-secret1b
+        variableMapping:
+          pythonScript.value: ${kv.read-secret1b}
+      - name: Pause
+        type: xlrelease.Task
+        description: |
+          See how we're able to manage multiple secrets.  In this case, we read in two secrets.
+          If we can read one or more, then we can read in many.
+        owner: admin
+    - phase: KV Engine-v2
+      description: |
+        The use case here is about using versioned secrets.
+        We use a KV-Version 2 engine in this example, and exercise a number of the APIs provided by that engine not availble in the V1 engine.
+      tasks:
+      - name: Configure Engine
+        type: vault.SecretsV2-Configure
+        vaultServer: myVault
+        mount_point: kv2
+      - name: Pause
+        type: xlrelease.Task
+        description: In this
+        owner: admin
+      - name: Create Secret
+        type: vault.SecretsV2-CreateSecret
+        vaultServer: myVault
+        mount_point: kv2
+        path: mysecret/releases
+        key: ${release.title}-secret2a
+        value: !value "vault_CreateSecret_Create_Secret_value"
+      - name: Read Secret
+        type: vault.SecretsV2-ReadSecretVersions
+        vaultServer: myVault
+        mount_point: kv2
+        path: mysecret/releases
+        key: ${release.title}-secret2a
+        variableMapping:
+          pythonScript.value: ${kv.read-secret2a}
+      - name: Pause
+        type: xlrelease.Task
+        owner: admin
+      - name: Create Secret
+        type: vault.SecretsV2-CreateSecret
+        vaultServer: myVault
+        mount_point: kv2
+        path: mysecret/releases
+        key: ${release.title}-secret2b
+        value: !value "vault_CreateSecret_Create_Secret_value"
+      - name: Read Secret
+        type: vault.SecretsV2-ReadSecretVersions
+        vaultServer: myVault
+        mount_point: kv2
+        path: mysecret/releases
+        key: ${release.title}-secret2b
+        variableMapping:
+          pythonScript.value: ${kv.read.value2b}
+      - name: Pause
+        type: xlrelease.Task
+        owner: admin
+    - phase: Dynamic Credentials - MySQL
+      description: |
+        This use case is about reading dynamic credentials for a MySQL database to run database operations.
+        The general cycle is to get the credential, perform some operations to show cause-and-effect, and then revoke the credentials.
+        The "trick" to perform in this demonstration is to use the credentials and provide the evidence of the operation.  By design, XLR
+        supports the use of security, and we're gong to run operations twice - with and without the credential to show success and failure.
+        Failures will be accepted in the release.
+    - phase: Dynamic Credentials - AWS
+      description: |
+        This use case is about reading dynamic credentials to manage AWS services.
+        The general cycle is to get the credential, manage services to show cause-and-effect, and then revoke the credentials.
+        The "trick" to perform in this demonstration is to use the credentials and provide the evidence of the operation.  By design, XLR
+        supports the use of security, and we're gong to run operations twice - with and without the credential to show success and failure.
+        Failures will be accepted in the release.
+    variables:
+    - type: xlrelease.PasswordStringVariable
+      key: kv.read-secret1a
+      requiresValue: false
+      showOnReleaseStart: false
+    - type: xlrelease.PasswordStringVariable
+      key: kv.read-secret1b
+      requiresValue: false
+      showOnReleaseStart: false
+    - type: xlrelease.PasswordStringVariable
+      key: kv.read-secret2a
+      requiresValue: false
+      showOnReleaseStart: false
+    - type: xlrelease.PasswordStringVariable
+      key: kv.read-secret2b
+      requiresValue: false
+      showOnReleaseStart: false
+    - type: xlrelease.StringVariable
+      key: kv.read.value
+      requiresValue: false
+      showOnReleaseStart: false
+    scriptUsername: admin
+    scriptUserPassword: !value "xlrelease_Release_vault_test_scriptUserPassword"
+    riskProfile: Default risk profile

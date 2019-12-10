@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright 2019 XEBIALABS
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-->
+
+<synthetic xsi:schemaLocation="http://www.xebialabs.com/deployit/synthetic synthetic.xsd"
+          xmlns="http://www.xebialabs.com/deployit/synthetic"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <type type="vault.Server" label="Hashicorp Vault Server" extends="configuration.HttpConnection">
+    <property name="scriptLocation" required="false" hidden="true" default="vault/CheckConnection.py" />
+    <property name="token" category="Authentication" password="true" required="false" description="Use a token in place of a username/password" />
+
+    <property name="username" required="false" hidden="true" description="Username not used" />
+    <property name="proxyHost" required="false" hidden="true" />
+    <property name="proxyUsername" required="false" hidden="true" />
+    <property name="proxyPassword" password="true" required="false" hidden="true" />
+    <property name="proxyPort" required="false" hidden="true"/>
+  </type>
+
+  <type type="vault.Task" extends="xlrelease.PythonScript" virtual="true">
+    <property name="iconLocation" default="vault/vault-icon.png" hidden="true" />
+    <property name="vaultServer" category="input" label="Server" referenced-type="vault.Server" kind="ci" required="true" />
+    <property name="token" category="input" password="true" required="false" description="Use a token in place of a username/password" />
+  </type>
+
+
+  <!-- Secrets Engine V1 -->
+  <type type="vault.SecretsV1" extends="vault.Task" virtual="true">
+    <property name="scriptLocation" required="false" hidden="true" default="vault/SecretsV1.py" />
+    <property name="mount_point" category="input" required="true" description="The secrets engine mount point" />
+  </type>
+
+  <type type="vault.SecretsV1-ReadDynamicSecret" extends="vault.SecretsV1">
+    <property name="path" category="input" required="true" description="The path to the secret(mysecrets/myvalue)" />
+    <property name="username" category="output" password="false" description="The username returned by Vault"/>
+    <property name="password" category="output" password="true" description="The password returned by Vault"/>
+  </type>
+
+  <type type="vault.SecretsV1-CreateSecret" extends="vault.SecretsV1">
+    <property name="path" category="input" required="true" description="The path to the secret (mysecrets/myvalue)" />
+    <property name="key" category="input" password="false" description="The key to read in the path"/>
+    <property name="value" category="input" password="true" description="The value of the path + key"/>
+  </type>
+
+  <type type="vault.SecretsV1-ReadSecret" extends="vault.SecretsV1">
+    <property name="path" category="input" required="true" description="The path to the secret(mysecrets/myvalue)" />
+    <property name="key" category="input" password="false" description="The key to read in the path"/>
+    <property name="value" category="output" password="true" description="The value to read back as a secret value"/>
+  </type>
+
+  <type type="vault.SecretsV1-ListSecrets" extends="vault.SecretsV1">
+    <property name="path" category="input" required="true" description="The path to the secret(mysecrets/myvalue)" />
+    <property name="key" category="input" password="false" description="The key to read in the path"/>
+    <property name="value" category="output" password="true" description="The value to read back as a secret value"/>
+  </type>
+
+  <type type="vault.SecretsV1-DeleteSecret" extends="vault.SecretsV1">
+    <property name="path" category="input" required="true" description="The path to the secret(mysecrets/myvalue)" />
+    <property name="key" category="input" password="false" description="The key to read in the path"/>
+    <property name="value" category="output" password="true" description="The value to read back as a secret value"/>
+  </type>
+
+  <type type="vault.SecretsV1-EnableEngine" extends="vault.SecretsV1">
+    <property name="data" category="input" description="JSON or HCL body defining the characteristics of your secrets engine"/>
+    <property name="output" category="output" description="The value of the path + key"/>
+  </type>
+
+
+  <!-- Secrets Engine V2 - these allow for multiple updates and versions.  Need to have a different access than V1 -->
+  <type type="vault.SecretsV2" extends="vault.Task" virtual="true">
+    <property name="scriptLocation" required="false" hidden="true" default="vault/SecretsV2.py" />
+    <property name="mount_point" category="input" required="true" description="The secrets engine mount point" />
+  </type>
+
+  <type type="vault.SecretsV2-EnableEngine" extends="vault.SecretsV2">
+    <property name="data" category="input" description="JSON or HCL body defining the characteristics of your secrets engine"/>
+    <property name="output" category="output" description="The value of the path + key"/>
+  </type>
+
+  <type type="vault.SecretsV2-Configure" extends="vault.SecretsV2">
+    <property name="max_versions" category="input" required="true" kind="integer" description="The number of versions to keep per key." />
+    <property name="cas_required" category="input" required="true" kind="boolean" description="If true all keys will require the cas parameter to be set on all write requests (true/false)" />
+    <property name="delete_version_after" category="input" required="true" description="If set, specifies the length of time before a version is deleted." />
+  </type>
+
+  <type type="vault.SecretsV2-ReadConfiguration" extends="vault.SecretsV2">
+    <property name="versions" category="input" required="true" description="The versions to read." />
+  </type>
+
+  <type type="vault.SecretsV2-ReadSecretVersions" extends="vault.SecretsV2">
+    <property name="path" category="input" required="true" description="The path to the secret(mysecrets/myvalue)" />
+    <property name="key" category="input" password="false" description="The key to read in the path"/>
+    <property name="version" category="input" required="true" description="The version(s) to read." />
+  </type>
+
+  <type type="vault.SecretsV2-CreateSecret" extends="vault.SecretsV2">
+    <property name="path" category="input" required="true" description="The path to the secret(mysecrets/myvalue)" />
+    <property name="key" category="input" password="false" description="The key to read in the path"/>
+    <property name="value" category="input" password="true" description="The value of the path + key"/>
+    <property name="cas" category="input" required="false" kind="boolean" description="Optionally specify Check-and-Set"/>
+  </type>
+
+  <type type="vault.SecretsV2-PatchExistingSecret" extends="vault.SecretsV2">
+    <property name="path" category="input" required="true" description="The path to the secret(mysecrets/myvalue)" />
+    <property name="key" category="input" required="true" password="false" description="The key to read in the path"/>
+    <property name="value" category="input" required="true" password="true" description="The value of the path + key"/>
+  </type>
+
+  <type type="vault.SecretsV2-DeleteVersion" extends="vault.SecretsV2">
+    <property name="path" category="input" required="true" description="The path to the secret(mysecrets/myvalue)" />
+    <property name="version" category="input" required="true" description="The version(s) to read." />
+  </type>
+
+  <type type="vault.SecretsV2-UndeleteVersion" extends="vault.SecretsV2">
+    <property name="path" category="input" required="true" description="The path to the secret(mysecrets/myvalue)" />
+    <property name="latest" category="input" required="true" kind="boolean" description="If checked, deleted the latest version" />
+    <property name="version" category="input" required="false" description="The version(s) to read.  Necessary if 'latest' is not checked." />
+  </type>
+
+  <type type="vault.SecretsV2-DestroyVersion" extends="vault.SecretsV2">
+    <property name="path" category="input" required="true" description="The path to the secret(mysecrets/myvalue)" />
+    <property name="version" category="input" required="true" description="The version(s) to read." />
+  </type>
+
+  <type type="vault.SecretsV2-ListSecrets" extends="vault.SecretsV2">
+    <property name="path" category="input" required="true" description="The path to the secret(mysecrets/myvalue)" />
+    <property name="secrets" category="output" password="true" description="The value of the secrets" />
+  </type>
+
+  <type type="vault.SecretsV2-ReadSecretMetadata" extends="vault.SecretsV2">
+    <property name="path" category="input" required="true" description="The path to the secret(mysecrets/myvalue)" />
+    <property name="metadata" category="output" password="false" description="The metadata of the secret" />
+  </type>
+
+  <type type="vault.SecretsV2-UpdateMetadata" extends="vault.SecretsV2">
+    <property name="path" category="input" required="true" description="The path to the secret(mysecrets/myvalue)" />
+    <property name="max_versions" category="input" required="true" kind="integer" description="The number of versions to keep per key." />
+    <property name="cas" category="input" required="true" kind="boolean" description="Optionally specify Check-and-Set"/>
+  </type>
+
+  <type type="vault.SecretsV2-DeleteMetaDataAndAllVersions" extends="vault.SecretsV2">
+    <property name="path" category="input" required="true" description="The path to the secret(mysecrets/myvalue)" />
+  </type>
+
+
+</synthetic>
