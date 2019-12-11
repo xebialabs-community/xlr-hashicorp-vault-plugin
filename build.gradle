@@ -35,6 +35,13 @@ license {
     exclude "**/*.xlvals"
 }
 
+if (!project.hasProperty('release.scope')) {
+  project.ext['release.scope'] = 'patch'
+}
+if (!project.hasProperty('release.useLastTag')) {
+  project.ext['release.useLastTag'] = true
+}
+
 xlDocker {
     /* See the instructions for com.xebialabs.xl.docker for more details. */
     /* The compile options are for the creation of the docker image. */
