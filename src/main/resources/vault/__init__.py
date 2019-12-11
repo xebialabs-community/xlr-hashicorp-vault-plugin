@@ -21,11 +21,11 @@ class VaultClient(object):
     # TODO: May need to consider adding/handling redirects (allow_redirects)
 
     # It is convenient to have separate values for exit codes, instead of the usual exit(1)
-    VAULT_SERVER_SEALED=1
-    VAULT_NOT_AUTHENTICATED=2
-    VAULT_NO_TOKEN=3
-    VAULT_NO_SERVER_PROVIDED=4
-    VAULT_NOT_INITIALIZED=5
+    VAULT_SERVER_SEALED = 1
+    VAULT_NOT_AUTHENTICATED = 2
+    VAULT_NO_TOKEN = 3
+    VAULT_NO_SERVER_PROVIDED = 4
+    VAULT_NOT_INITIALIZED = 5
 
     def __init__(self, configuration, token, logger=None):
         self.logger = logger

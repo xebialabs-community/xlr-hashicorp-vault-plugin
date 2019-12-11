@@ -33,6 +33,14 @@ Import the jar file into your `%XLRELEASE_INSTALLATION%/plugins/__local__` folde
 
 Define the server configuration of URL plus token.  These instructions TBD.
 
+### Configuration
+### Secrets Engine V1
+### Secrets Engine V2
+### Dynamic Secrets
+### MySQL Secrets Engine
+### AWS Secrets Engine
+
+
 
 ## Plugin build mechanics
 
@@ -46,21 +54,7 @@ You may wish to follow the logs of the xlr container with the next command, as t
 
 The runDockerCompose assets are located in `src/test/resources/docker` primarily as the `docker-compose.yml` file.
 
-###Build the software:
-`./gradlew clean build`
-
-###Set the version of Gradle:
-`./gradlew wrapper --gradle-version=6.0.1 --distribution-type=bin`
-
-###Check dependencies versions:
-`./gradlew dependencyUpdate -Drevision=release`
-
-###Release Software:
-1. Create a pull request.  Make your changes, and tag your code with Major.Minor.Patch version numbers
-1. Once the pull request is approved, our CI server builds up the software.  If it passes - 
-1. The CI build publishes results to the GitHub Releases section.
-
-## Testing
+## Testing with as-code
 
 This repository includes "as-code" files to help you get started with a testing environment.
 
@@ -69,18 +63,19 @@ Start your build with runDockerCompose:
 `./gradlew runDockerCompose`
 
 Stop your test with stopDockerCompose:
+
 `./gradlew stopDockerCompose`
 
 These two URLs are defined by the contents in your src/test/resources/docker/docker-compose.yml file:
 
-XLR: localhost:15516
-Vault: localhost:15200
+- XLR: http://localhost:15516
+- Vault: http://localhost:15200
 
 ### Setting up Vault
 Navigate to the Vault URL and configure your number of keys and how many are needed to unseal.  
-We recommend 3 and 2, respectively.  Save your keys and master token for logging in later.
+We recommend 3 and 2, respectively.  Save your keys and master token.
 You may also configure the Vault sever from the CLI (that is an exercise for the reader).  
-If you preserve your directory structure, your keys and token will persist on each runDockerCompose invocation.  
+If you preserve your directory structure, your keys and token values will persist on each runDockerCompose invocation, but you will have to unseal the server.  
 
 Once you setup Vault from the UI (or CLI), you can run these commands to setup your initial secrets engines.  The secrets engine creation is a one-time process for each persisted run.
 
@@ -91,6 +86,7 @@ vault secrets enable -version=2 -path=kv2 kv
 vault secrets list
 ```
 
+The commands above will configure secrets engines for the supplied XLR Template.
  
 ### Update src/test/resources/ascode/xebialabs/secrets.xvals 
 Next, update your secrets to use the token in your XLR configuration.
@@ -107,3 +103,5 @@ From your XL CLI, navigate to the `src/test/resources/ascode/` folder and run th
 
 The file `blueprints.yaml` contains a blueprints definition for the local XLR server so you don't have to modify your current configuration.
 
+The imported template are at the Vault folder as "vault-test."
+ 

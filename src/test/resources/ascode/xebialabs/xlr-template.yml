@@ -37,10 +37,16 @@ spec:
         key: ${release.title}-secret1a
         variableMapping:
           pythonScript.value: ${kv.read-secret1a}
-      - name: Pause
-        type: xlrelease.Task
-        description: Show evidence of this secret being used.
+      - name: 'Pause And Ask'
+        type: xlrelease.UserInputTask
+        description: |-
+          Show evidence of this secret being used.
+          Navigate to http://localhost:15200/ui/vault/secrets/kv/list/mysecret/
+
+          Also, what is the value of the new secret?
         owner: admin
+        variables:
+          - kv.write-secret
       - name: Create Secret
         type: vault.SecretsV1-CreateSecret
         description: Create a second secret.
@@ -148,6 +154,12 @@ spec:
       key: kv.read.value
       requiresValue: false
       showOnReleaseStart: false
+    - type: xlrelease.StringVariable
+      key: kv.write-secret
+      showOnReleaseStart: false
+      label: Value of the secret to write
+      description: The value of the secret we will be writing.
+      value: !value "vault_CreateSecret_Create_Secret_value"
     scriptUsername: admin
     scriptUserPassword: !value "xlrelease_Release_vault_test_scriptUserPassword"
     riskProfile: Default risk profile

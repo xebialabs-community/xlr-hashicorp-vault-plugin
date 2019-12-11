@@ -1,3 +1,17 @@
-env:
-  global:
+language: java
+notifications:
+  slack:
+    secure: cCDQ3dE/eK0KBF8YhAK1+lMBa0j3p8jSSuvdMeFLQEZ1m3dsTV5LKl8H8aFVxX1f6CCIlmm6ZeiKnUBzEXEi1MlOxpKVe1hc1L4cOKGKEcycZftOPQoZxTPGaEXU9yb9W0Vzzgc/fBr0CCvMYBFmeC/bi7amlv/sVOn0pZRdeW/9HkD/Rey3u58eqt3gUMtCTqkmefBHcCxegLelZKnFYtF72ifitBBA5+r/ttfUmiqE5edsVfA7pNUeoc8ygqW+pYWJJzQf5hbdhp8036+4YAJp6uZEok47GtdDN+ZeamAYeBxkBzc4PloPGulr/opxMU3GYrxcc4PXqba5vSgpylR37lC+pt/nuWJ7i6g7gDRdokh/uBj4u+fpta2E+WnWX4jX/ZjW5mJulRSz7PSBc4kd9FjfEK7VUqI4PTKkiO5UQVIK0PQ6dKG1u5bxMs5fZ/kexBIbAlCLSILpgXVjqqTFDt3J/pWyvZwwh7P6eWOdcmOdVu2zV7QayfgAIZtpq219vXHoITrsV+IeAgfLrSnxaRuZnSlGKrL3bz94bd623Z9CrXYqp/cOXtsQmnbnRlwYcGDpb2sVy0EWT+6sIIqZnWDewNiHuyJC+2whTeK7XKrnkou8JSkfwxtWh5u5NjXVuU81uJJi4DENXnKQ/byla/uitVOmaCDDdYcZsSw=
+jdk:
+  - openjdk8
+deploy:
+  provider: releases
+  file_glob: true
+  file: build/libs/xlr*.jar
+  skip_cleanup: true
+  on:
+    repo: xebialabs-community/xlr-hashicorp-vault-plugin
+    all_branches: true
+    tags: true
+  api_key:
     secure: ir7mZ+40aWL95j9h2LUaglr6lW9vpTjlnS+yRVXgpq16Y82m4jW2XhToijdFnR3mLyNO4N2+Y6lk1PyHjW1jqr/an7QJmzvmc1/MFMAF84n64pknASS6Nn05B1KmxifSsCAwVgLzPKoNW0J7/UgbC5l/sSO6T5lQHbogAx5rPsKz7mjQb2Gbtp0fuSEG509TvxM/9CNC7m0qelyncYrhsCadqfXC/V5We7ynMZumrJiAzVFEaKZovcVs03oioiWQreySOwPsmFVYr2/9YgKJJ5kALHLEJ2QXVuH3wFPq6JKEifbhv3eD/fuA3KG9303bScXRa4dm5Tu8LM3m2rDsVbd7PRcl4bmIm7JT0kjK1ehfb6IHTqLmNZ+sEd5Y3B1CwzThOp0zeTeNJJ2zdoMRI0eVDeHFxw3IpsA9EcfKl7HYIVzzjYavRVIzuCxQLCQ8a6tlE60YW7q3UwF/Xwwvi8fOQtIe6y0LN/5V1pYcVcPl8T+ih32cGbB5DkFazfo/wR+8TjR3Cbu7g4JLO8KhLUzGQ3WeVzKmvKon0j++QHK/J9uxddiEkvhVwY/R6eyijmR1FZYSyXj1604Vd8J9XujtydOamfKVVMRdylhZycU+kAW+v3QGZV3cAQDx5h8XkXs+Ry9zeLQDkYoX+y+UhubKFCK4l4ktDaHCWO8nQjU=
