@@ -27,6 +27,9 @@ license {
     exclude "**/*.json"
     /* Ignore png files. */
     exclude "**/*.png"
+    /* Ignore yaml files. */
+    exclude "**/*.yaml"
+    exclude "**/*.yml"
     /* Ignore hvac library files because we don't control them. */
     exclude "**/hvac/**/*.*"
     exclude "**/*.xlvals"

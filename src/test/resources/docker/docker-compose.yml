@@ -27,8 +27,8 @@ vault:
   restart: always
   volumes:
     - ./../vault/volumes/config:/vault/config
-    - ./../../../../vault/volumes/file:/vault/file
-    - ./../../../../vault/volumes/logs:/vault/logs
+    - ./../../../../../tests/vault/volumes/file:/vault/file
+    - ./../../../../../tests/vault/volumes/logs:/vault/logs
   cap_add:
     - IPC_LOCK
   entrypoint: vault server -config=/vault/config/vault.json

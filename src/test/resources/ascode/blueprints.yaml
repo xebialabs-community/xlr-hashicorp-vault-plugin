@@ -1,0 +1,16 @@
+blueprint:
+  current-repository: vault
+  repositories:
+    - name: vault
+      type: http
+      url: https://dist.xebialabs.com/public/blueprints/${CLIVersion}/
+xl-deploy:
+  authmethod: basic
+  password: admin
+  url: http://localhost:14516/
+  username: admin
+xl-release:
+  authmethod: basic
+  password: admin
+  url: http://localhost:15516/
+  username: admin

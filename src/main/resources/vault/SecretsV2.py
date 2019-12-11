@@ -6,29 +6,31 @@
 # The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-import hvac
-from vault.Vault import Vault
+import logging
 
-client = hvac.Client(url=vaultServer['url'],
-                     token=vaultServer['token'])
+from vault import VaultClient
+
+logger = logging.getLogger("Vault")
+logger.info("VAULT: Executing %s" % task.getTaskType())
+vault_client = VaultClient(vaultServer, token=vaultServer['token'], logger=logger)
 
 # Use the name of the type in multiple places.
 mytype = str(task.getTaskType())
 logger.info("=== VAULT SECRET V2 : {} ===".format(mytype))
 
-if (client.sys.is_initialized()):
+if vault_client.client.sys.is_initialized():
 
-    if (client.sys.is_sealed()):
-        Vault.exit(Vault.VAULT_SERVER_SEALED, "Vault Server {} is Sealed".format(vaultServer['url']))
+    if vault_client.client.sys.is_sealed():
+        vault_client.exit(vault_client.VAULT_SERVER_SEALED, "Vault Server {} is Sealed".format(vaultServer['url']))
 
     if vaultServer['token']:
         logger.info("Validating token configuration against {}".format(vaultServer['url']))
 
-        if client.is_authenticated():
+        if vault_client.client.is_authenticated():
 
             # vault.SecretsV2.Read
             if mytype == 'vault.SecretsV2-Configure':
-                response = client.secrets.kv.v2.configure(
+                response = vault_client.client.secrets.kv.v2.configure(
                     max_versions=max_versions,
                     mount_point=mount_point,
                     cas_required=cas_required
@@ -39,14 +41,14 @@ if (client.sys.is_initialized()):
                 logger.info("SecretsV2-EnableEngine Not Implemented")
 
             elif mytype == 'vault.SecretsV2-ReadConfiguration':
-                kv_configuration = client.secrets.kv.v2.read_configuration(mount_point=mount_point)
+                kv_configuration = vault_client.client.secrets.kv.v2.read_configuration(mount_point=mount_point)
                 logger.info('Config under path "kv": max_versions set to "{max_ver}"'.format(
                     max_ver=kv_configuration['data']['max_versions'],))
                 logger.info('Config under path "kv": check-and-set require flag set to {cas}'.format(
                     cas=kv_configuration['data']['cas_required'],))
 
             elif mytype == "vault.SecretsV2-ReadSecretVersions":
-                secret_version_response = client.secrets.kv.v2.read_secret_version(
+                secret_version_response = vault_client.client.secrets.kv.v2.read_secret_version(
                     path=path,
                     version=version,
                     mount_point=mount_point
@@ -59,21 +61,21 @@ if (client.sys.is_initialized()):
             elif mytype == "vault.SecretsV2-CreateSecret":
                 logger.info('CreateSecret has these values for path, key, cas = {},{},{}'.format(path, key, cas))
                 if cas:
-                    response = client.secrets.kv.v2.create_or_update_secret(
+                    response = vault_client.client.secrets.kv.v2.create_or_update_secret(
                         path=path,
                         secret=dict(key=value),
                         cas=cas,
                         mount_point=mount_point
                     ) # Raises hvac.exceptions.InvalidRequest
                 else:
-                    response = client.secrets.kv.v2.create_or_update_secret(
+                    response = vault_client.client.secrets.kv.v2.create_or_update_secret(
                         path=path,
                         secret=dict(key=value),
                         mount_point=mount_point
                     )
 
             elif mytype == "vault.SecretsV2-PatchExistingSecret":
-                response = client.secrets.kv.v2.patch(
+                response = vault_client.client.secrets.kv.v2.patch(
                     path=path,
                     secret=dict(key=value),
                     mount_point=mount_point
@@ -81,19 +83,19 @@ if (client.sys.is_initialized()):
 
             elif mytype == "vault.SecretsV2-DeleteVersion":
                 if (latest): # Delete the latest version
-                    response = client.secrets.kv.v2.delete_latest_version_of_secret(
+                    response = vault_client.client.secrets.kv.v2.delete_latest_version_of_secret(
                         path=path,
                         mount_point=mount_point
                     )
                 else: # Need to delete a specific version
-                    response = client.secrets.kv.v2.delete_latest_version_of_secret(
+                    response = vault_client.client.secrets.kv.v2.delete_latest_version_of_secret(
                         path=path,
                         mount_point=mount_point,
                         versions=version
                     )
 
             elif mytype == "vault.SecretsV2-UndeleteVersion":
-                response = client.secrets.kv.v2.undelete_secret_versions(
+                response = vault_client.client.secrets.kv.v2.undelete_secret_versions(
                     path=path,
                     mount_point=mount_point,
                     versions=versions,
@@ -101,7 +103,7 @@ if (client.sys.is_initialized()):
                 logger.info("Response is {}".format(response))
 
             elif mytype == "vault.SecretsV2-DestroyVersion":
-                response = client.secrets.kv.v2.destroy_secret_versions(
+                response = vault_client.client.secrets.kv.v2.destroy_secret_versions(
                     path=path,
                     mount_point=mount_point,
                     versions=versions,
@@ -109,7 +111,7 @@ if (client.sys.is_initialized()):
                 logger.info("Response is {}".format(response))
 
             elif mytype == "vault.SecretsV2-ListSecrets":
-                response = client.secrets.kv.v2.list_secrets(
+                response = vault_client.client.secrets.kv.v2.list_secrets(
                     path=path,
                     mount_point=mount_point
                 )
@@ -121,7 +123,7 @@ if (client.sys.is_initialized()):
                 logger.info("Response is {}".format(response))
 
             elif mytype == "vault.SecretsV2-ReadSecretMetadata":
-                hvac_path_metadata = client.secrets.kv.v2.read_secret_metadata(
+                hvac_path_metadata = vault_client.client.secrets.kv.v2.read_secret_metadata(
                     path=path,
                     mount_point=mount_point
                 )
@@ -130,7 +132,7 @@ if (client.sys.is_initialized()):
 
             elif mytype == "vault.SecretsV2-UpdateMetaData":
 
-                response = client.secrets.kv.v2.update_metadata(
+                response = vault_client.client.secrets.kv.v2.update_metadata(
                     path=path,
                     mount_point=mount_point,
                     max_versions=max_versions,
@@ -139,7 +141,7 @@ if (client.sys.is_initialized()):
                 logger.info("Response is {}".format(response))
 
             elif mytype == "vault.SecretsV2-DeleteMetaDataAndAllVersions":
-                response = client.secrets.kv.v2.delete_metadata_and_all_versions(
+                response = vault_client.client.secrets.kv.v2.delete_metadata_and_all_versions(
                     path=path,
                 )
                 logger.info("Response is {}".format(response))
@@ -148,8 +150,8 @@ if (client.sys.is_initialized()):
                 logger.info("Not Implemented {}".format(mytype))
 
         else:
-            Vault.exit(Vault.VAULT_NOT_AUTHENTICATED, "Vault Server is not authenticated")
+            vault_client.exit(vault_client.VAULT_NOT_AUTHENTICATED, "Vault Server is not authenticated")
     else:
-        Vault.exit(Vault.VAULT_NO_TOKEN, "You must use a token for Vault")
+        vault_client.exit(vault_client.VAULT_NO_TOKEN, "You must use a token for Vault")
 else:
-    Vault.exit(Vault.VAULT_NOT_INITIALIZED, "Your Vault Server at {} is not initialized".format(vaultServer['url']))
+    vault_client.exit(vault_client.VAULT_NOT_INITIALIZED, "Your Vault Server at {} is not initialized".format(vaultServer['url']))

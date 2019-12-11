@@ -7,29 +7,32 @@
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import hvac
-from vault.Vault import Vault
+import logging
 
-client = hvac.Client(url=vaultServer['url'],
-                     token=vaultServer['token'])
+from vault import VaultClient
+
+logger = logging.getLogger("Vault")
+logger.info("VAULT: Executing %s" % task.getTaskType())
+vault_client = VaultClient(vaultServer, token=vaultServer['token'], logger=logger)
 
 # Use the name of the type in multiple places.
 mytype = str(task.getTaskType())
 logger.info("=== VAULT SECRET V1 : {} ===".format(mytype))
 
-if (client.sys.is_initialized()):
+if (vault_client.client.sys.is_initialized()):
 
-    if (client.sys.is_sealed()):
-        Vault.exit(Vault.VAULT_SERVER_SEALED, "Vault Server {} is Sealed".format(vaultServer['url']))
+    if (vault_client.client.sys.is_sealed()):
+        vault_client.exit(vault_client.VAULT_SERVER_SEALED, "Vault Server {} is Sealed".format(vaultServer['url']))
 
     if vaultServer['token']:
         logger.info("Validating token configuration against {}".format(vaultServer['url']))
 
-        if client.is_authenticated():
+        if vault_client.client.is_authenticated():
 
             if mytype == 'vault.SecretsV1-ReadSecret':
                 key_path = path + '/' + key
                 logger.info("Reading from {}".format(key_path))
-                read_response = client.secrets.kv.v1.read_secret(mount_point=mount_point, path=path)
+                read_response = vault_client.client.secrets.kv.v1.read_secret(mount_point=mount_point, path=path)
                 logger.info(">> Read Request complete for {}/{}/{} - {}".format(mount_point, path, key, read_response))
                 value = read_response['data'][key]
                 logger.info("===============================================================")
@@ -41,12 +44,12 @@ if (client.sys.is_initialized()):
                 new_secret = {key : value}
                 # TODO: Delete the next line once we know this write operation works.
                 logger.info(">> Writing {} to {}".format(new_secret, path))
-                create_response = client.secrets.kv.v1.create_or_update_secret(mount_point=mount_point, path=path, secret=new_secret)
+                create_response = vault_client.client.secrets.kv.v1.create_or_update_secret(mount_point=mount_point, path=path, secret=new_secret)
                 logger.info(">> Write Request complete for {} : {}".format(path, create_response))
                 logger.info("===============================================================")
 
             elif mytype == 'vault.SecretsV1-DeleteSecret':
-                delete_response = client.secrets.kv.v1.delete_secret(
+                delete_response = vault_client.client.secrets.kv.v1.delete_secret(
                     mount_point=mount_point,
                     path=path,
                 )
@@ -60,8 +63,8 @@ if (client.sys.is_initialized()):
                 logger.info("Not Implemented {}".format(mytype))
 
         else:
-            Vault.exit(Vault.VAULT_NOT_AUTHENTICATED, "Vault Server is not authenticated")
+            vault_client.exit(vault_client.VAULT_NOT_AUTHENTICATED, "Vault Server is not authenticated")
     else:
-        Vault.exit(Vault.VAULT_NO_TOKEN, "You must use a token for Vault")
+        vault_client.exit(vault_client.VAULT_NO_TOKEN, "You must use a token for Vault")
 else:
-    Vault.exit(Vault.VAULT_NOT_INITIALIZED, "Your Vault Server at {} is not initialized".format(vaultServer['url']))
+    vault_client.exit(vault_client.VAULT_NOT_INITIALIZED, "Your Vault Server at {} is not initialized".format(vaultServer['url']))
