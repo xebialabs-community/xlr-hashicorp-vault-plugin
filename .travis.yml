@@ -8,6 +8,8 @@ deploy:
   api_key:
     secure: 1rsS/v0gpOGE+jL1/USZ1XXsoZl4hLl8kjP6Y+QIHw2exf70uZPYg64IfVN/wvrCt5nZ7ITMcw1smY1taYSVnsDgRHlFiVye7W666kxI+3r5zWv+BXvD/Bh9A/DPfMxRJGWT9DGG6Uhhh14iHwt24NBsHPDaJqzCxtthldup6VIPyFqva9lv/aK+OGJm2dRtXMkq9Nfxcx7EfRS93NwArImg73TkWhvlqwHJ4a7kcpabjk/KUT/xv51WAUxOwMGIARlOzaOf0Hxa7cvizYB2XfMronZCnbiDHqGp31EvR+WIHAhIoWhN85SLsWlDt478xmWIOzP3RlXgMRp3uzyPndBRSihnV+dA0wgNAlpYLGigpQN7n6ZhCeLzByhzcVkJ1WinYeYDVJnhf5rDbKRR7CLIE+sDr9jG2RV/nhRejP/dRmrgrQ/pGvfrN7ZcDZWdJ0Zwj7MPz11lxKbgvl1Qn5hlsLnMvANIbKuHzExTkt7E7YMNLYrcCcl5O46uhyLtPXi7iy6WtyfWNMIrp2BjUe4Lfm0D2B618TxJx7RHCoht1F+pedAxsN2JJQr0Td3CEZvEjtVHuqPJ7GoViX1CdmZwfWghe3oQMZa/r7QvZm9F0uHjvQmz4v4drl8gnrP2yP94uskZwuuGE8AtZ22Ugw1d6MVm5aXdna+6/6tV14g=
   file: build/libs/xlr-*.jar
+  file_glob: true
+  skip_cleanup: true
   on:
     all_branches: true
     tags: true
