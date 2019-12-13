@@ -15,6 +15,8 @@
 
 The [HashiCorp Vault](https://www.vaultproject.io/) plugin is an XL Release plugin that retrieves secrets from a Vault Server for use in your tasks and automations.  These secrets include static and dynamic username and password fields from the Secrets Engine of your choice.
 
+NOTE: This is presently a community plugin meant to prove the concept.  As such, there are optimizations that should be made, which includes a reduction in the liberal logging that *may* include secrets.
+
 ## Requirements
 
 * **XL Release requirements**
@@ -74,6 +76,8 @@ These two URLs are defined by the contents in your src/test/resources/docker/doc
 
 - XLR: http://localhost:15516
 - Vault: http://localhost:15200
+
+See the readme in the ascode folder for more details on the different models.
 
 ### Setting up Vault
 Navigate to the Vault URL and configure your number of keys and how many are needed to unseal.  
