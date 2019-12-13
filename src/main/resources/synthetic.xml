@@ -106,6 +106,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     <property name="key" category="input" password="false" description="The key to read in the path"/>
     <property name="value" category="input" password="true" description="The value of the path + key"/>
     <property name="cas" category="input" required="false" kind="boolean" description="Optionally specify Check-and-Set"/>
+    <property name="version" category="output" password="false" description="The version we just created"/>
   </type>
 
   <type type="vault.SecretsV2-PatchExistingSecret" extends="vault.SecretsV2">

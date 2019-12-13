@@ -2,6 +2,7 @@
 
 [![License: MIT][xlr-hashicorp-vault-plugin-license-image] ][xlr-hashicorp-vault-plugin-license-url]
 [![Github All Releases][xlr-hashicorp-vault-plugin-downloads-image] ]()
+[![Build Status](https://travis-ci.org/xebialabs-community/xlr-hashicorp-vault-plugin.svg?branch=master)](https://travis-ci.org/xebialabs-community/xlr-hashicorp-vault-plugin)
 
 [xlr-hashicorp-vault-plugin-license-image]: https://img.shields.io/badge/License-MIT-yellow.svg
 [xlr-hashicorp-vault-plugin-license-url]: https://opensource.org/licenses/MIT
