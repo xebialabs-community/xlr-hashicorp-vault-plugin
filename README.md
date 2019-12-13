@@ -6,6 +6,9 @@
 [xlr-hashicorp-vault-plugin-license-image]: https://img.shields.io/badge/License-MIT-yellow.svg
 [xlr-hashicorp-vault-plugin-license-url]: https://opensource.org/licenses/MIT
 [xlr-hashicorp-vault-plugin-downloads-image]: https://img.shields.io/github/downloads/xebialabs-community/xlr-hashicorp-vault-plugin/total.svg
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/028a468d01c24cc192e167f776f0fe05)](https://www.codacy.com/manual/marcoman/xlr-hashicorp-vault-plugin?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=xebialabs-community/xlr-hashicorp-vault-plugin&amp;utm_campaign=Badge_Grade)
+[![Maintainability](https://api.codeclimate.com/v1/badges/9327483cb92b9a203d6d/maintainability)](https://codeclimate.com/github/xebialabs-community/xlr-hashicorp-vault-plugin/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/9327483cb92b9a203d6d/test_coverage)](https://codeclimate.com/github/xebialabs-community/xlr-hashicorp-vault-plugin/test_coverage)
 
 # Overview
 
