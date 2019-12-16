@@ -37,8 +37,8 @@ In XLR, this template creates a Vault/vault-test Template.  When you run this
 template, you are guided through the different steps to create and update
 secrets.  In the present form, these secret engines are supported:
 
-* Secrets Engine V1
-* Secrets Engine V2.  This includes outputs to show the version of the secret.
+- Secrets Engine V1
+- Secrets Engine V2.  This includes outputs to show the version of the secret.
 
 The template approximates some real-world scenarios *as well as some contrived
 use cases.*  You are urged to evaluate the applicability fo the example for
@@ -46,9 +46,9 @@ your use case.
 
 The next steps are to include secrets engine support for:
 
-* AWS
-* Dynamnic
-* MySQL
-* Others as demanded and time permits.
+- AWS
+- Dynamnic
+- MySQL
+- Others as demanded and time permits.
 
 

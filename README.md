@@ -20,13 +20,11 @@ liberal logging that *may* include secrets.
 
 ## Requirements
 
-* XL Release: version 9.5+
-* Plugin Testing requirements
-  * gradle
-  * docker
-  * a modern web browser
-  * a linux-friendly CLI
-  * XL CLI 9.5 or higher
+- XL Release: version 9.5+
+- Plugin Testing requirements
+  - Gradle
+  - Docker
+  - XL CLI 9.5 or higher
 
 ## Installation
 
@@ -78,8 +76,8 @@ Stop your test with stopDockerCompose:
 
 These two URLs are defined by the contents in your src/test/resources/docker/docker-compose.yml file:
 
-* XLR: [http://localhost:15516](http://localhost:15516)
-* Vault: [http://localhost:15200](http://localhost:15200)
+- XLR: [http://localhost:15516](http://localhost:15516)
+- Vault: [http://localhost:15200](http://localhost:15200)
 
 See the readme in the ascode folder for more details on the different models.
 
@@ -109,11 +107,11 @@ The commands above will configure secrets engines for the supplied XLR Template.
 
 Next, update your secrets to use the token in your XLR configuration.
 
-* The vault token generated for your server (vault_Server_vault_test_token).
+- The vault token generated for your server (vault_Server_vault_test_token).
   This default value will *not* work until you update the token for your system.
-* The name of a secret value for your testing (vault_CreateSecret_Create_Secret_value).
+- The name of a secret value for your testing (vault_CreateSecret_Create_Secret_value).
   The default is "test-password-123"
-* The XLR admin user password for scripts (xlrelease_Release_vault_test_scriptUserPassword).
+- The XLR admin user password for scripts (xlrelease_Release_vault_test_scriptUserPassword).
   The default is "admin"
 
 ### Import the models
