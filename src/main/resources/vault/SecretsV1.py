@@ -20,8 +20,8 @@ import logging
 from vault import VaultClient
 
 logger = logging.getLogger("Vault")
-logger.info("VAULT: Executing %s" % task.getTaskType())
-print("VAULT: Executing %s" % task.getTaskType())
+logger.info("VAULT V1: Executing %s" % task.getTaskType())
+print("VAULT V1: Executing %s" % task.getTaskType())
 vault_client = VaultClient(vaultServer, token=vaultServer['token'], logger=logger)
 
 # Use the name of the type in multiple places.
@@ -32,8 +32,7 @@ print("=== VAULT SECRET V1 : {} ===".format(mytype))
 if vault_client.client.sys.is_initialized():
     logger.info("Vault Initialized:{}".format(vaultServer['url']))
 else:
-    vault_client.exit(vault_client.VAULT_NOT_INITIALIZED,
-                      "Your Vault Server at {} is not initialized".format(vaultServer['url']))
+    vault_client.exit(vault_client.VAULT_NOT_INITIALIZED, "Your Vault Server at {} is not initialized".format(vaultServer['url']))
 
 if vault_client.client.sys.is_sealed():
     vault_client.exit(vault_client.VAULT_SERVER_SEALED, "Vault Server {} is Sealed".format(vaultServer['url']))
@@ -67,19 +66,14 @@ elif mytype == 'vault.SecretsV1-CreateSecret':
     # TODO: Delete the next line once we know this write operation works.
     logger.info(">> Writing {} to {}".format(new_secret, path))
     print(">> Writing {} to {}".format(new_secret, path))
-    create_response = vault_client.client.secrets.kv.v1.create_or_update_secret(mount_point=mount_point,
-                                                                                path=path,
-                                                                                secret=new_secret)
+    create_response = vault_client.client.secrets.kv.v1.create_or_update_secret(mount_point=mount_point, path=path, secret=new_secret)
     logger.info(">> Write Request complete for {} : {}".format(path, create_response))
     logger.info("===============================================================")
     print(">> Write Request complete for {} : {}".format(path, create_response))
     print("===============================================================")
 
 elif mytype == 'vault.SecretsV1-DeleteSecret':
-    delete_response = vault_client.client.secrets.kv.v1.delete_secret(
-        mount_point=mount_point,
-        path=path,
-    )
+    delete_response = vault_client.client.secrets.kv.v1.delete_secret(mount_point=mount_point,path=path)
     logger.info(">> Delete Request complete for {}/{} - {}".format(mount_point, path, delete_response))
     logger.info("===============================================================")
 
