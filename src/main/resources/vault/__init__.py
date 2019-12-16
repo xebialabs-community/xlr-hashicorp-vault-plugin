@@ -17,8 +17,6 @@
 #
 
 import hvac
-from org.slf4j import Logger
-from org.slf4j import LoggerFactory
 
 class VaultClient(object):
     # TODO: Consider adding support for headers
