@@ -50,5 +50,3 @@ The next steps are to include secrets engine support for:
 - Dynamnic
 - MySQL
 - Others as demanded and time permits.
-
-
